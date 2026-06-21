@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="{{.Language}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{.Title}}</title>
+  <link rel="stylesheet" href="/static/app.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body data-theme="{{.Theme}}">
+  {{if .Flash}}<div class="toast-stack"><div class="toast {{.Flash.Kind}}" role="status">{{.Flash.Message}}</div></div>{{end}}
+  {{template "topbar" .}}
+  <main class="page">
+    {{if .Storage}}
+    <div class="page-head">
+      <div>
+        <h1>{{.Storage.Name}}</h1>
+        <p class="muted meta-line">
+          <span class="badge">{{displayStorageTypeLang .Language .Storage.Type}}</span>
+          <span class="badge soft">{{displayVisibilityLang .Language .Storage.Visibility}}</span>
+          <span>{{formatBytes .Storage.UsedSize}} / {{formatBytes .Storage.MaxStorageSize}}</span>
+        </p>
+      </div>
+      <div class="header-actions">
+        <button class="button secondary" type="button" data-dialog-target="access-dialog">{{t .Language "storage.accesses"}}</button>
+        <a class="button secondary" href="/storages/{{.Storage.ID}}/settings">{{t .Language "storage.settings"}}</a>
+        <form method="post" action="/storages/{{.Storage.ID}}/delete" data-confirm="{{t .Language "storage.confirm_delete"}}">
+          <button class="danger" type="submit">{{t .Language "storage.delete"}}</button>
+        </form>
+      </div>
+    </div>
+    {{end}}
+    {{if .Error}}<p class="error">{{.Error}}</p>{{end}}
+
+    {{if .Storage}}
+    <section class="overview-strip">
+      <div>
+        <span class="metric-label">{{t .Language "storage.used"}}</span>
+        <strong>{{formatBytes .Storage.UsedSize}}</strong>
+        <span class="usage-track"><span class="usage-fill" style="width: {{usagePercent .Storage.UsedSize .Storage.MaxStorageSize}}%"></span></span>
+      </div>
+      <div>
+        <span class="metric-label">{{t .Language "storage.max_file"}}</span>
+        <strong>{{formatBytes .Storage.MaxFileSize}}</strong>
+      </div>
+      <div>
+        <span class="metric-label">{{t .Language "storage.type_rules"}}</span>
+        <div class="rule-groups">
+          <div class="pill-row"><span class="muted">{{t .Language "storage.accepts"}}</span>{{range .Storage.AllowedFileTypes}}<span class="pill">{{.}}</span>{{else}}<span class="muted">{{t $.Language "storage.all_types"}}</span>{{end}}</div>
+          <div class="pill-row"><span class="muted">{{t .Language "storage.rejects"}}</span>{{range .Storage.BlockedFileTypes}}<span class="pill danger-pill">{{.}}</span>{{else}}<span class="muted">{{t $.Language "storage.no_rules"}}</span>{{end}}</div>
+        </div>
+	      </div>
+	      <div class="pagination">
+	        <span class="muted">{{t .Language "storage.files_count"}} {{.FileTotal}}</span>
+	        <div class="pagination-actions">
+	          {{if .FileHasPrev}}
+	          <a class="button compact secondary" href="/storages/{{.Storage.ID}}?{{if .FolderID}}folderId={{.FolderID}}&{{end}}q={{.FileSearch}}&sort={{.FileSort}}&dir={{.FileDirection}}&page={{.FilePrevPage}}">{{t .Language "storage.prev"}}</a>
+	          {{end}}
+	          <span class="muted">{{t .Language "storage.page"}} {{.FilePage}}</span>
+	          {{if .FileHasNext}}
+	          <a class="button compact secondary" href="/storages/{{.Storage.ID}}?{{if .FolderID}}folderId={{.FolderID}}&{{end}}q={{.FileSearch}}&sort={{.FileSort}}&dir={{.FileDirection}}&page={{.FileNextPage}}">{{t .Language "storage.next"}}</a>
+	          {{end}}
+	        </div>
+	      </div>
+	    </section>
+
+    <section class="band files-band">
+      <div class="section-head">
+        <div>
+          <h2>{{t .Language "storage.files"}}</h2>
+          <nav class="breadcrumbs" aria-label="Path">
+            {{if .Folder}}
+              {{if .Folder.ParentID}}
+                <a class="button compact secondary" href="/storages/{{.Storage.ID}}?folderId={{.Folder.ParentID}}">{{t .Language "storage.up"}}</a>
+              {{else}}
+                <a class="button compact secondary" href="/storages/{{.Storage.ID}}">{{t .Language "storage.up"}}</a>
+              {{end}}
+            {{end}}
+            <a class="breadcrumb-root" href="/storages/{{.Storage.ID}}">{{t .Language "storage.root"}}</a>
+            {{range .Path}}
+              <span>/</span>
+              <a href="/storages/{{$.Storage.ID}}?folderId={{.ID}}">{{.Name}}</a>
+            {{end}}
+          </nav>
+        </div>
+        <div class="header-actions section-actions">
+          <form method="post" enctype="multipart/form-data" action="/storages/{{.Storage.ID}}/files" class="upload-form">
+            {{if .FolderID}}<input type="hidden" name="folderId" value="{{.FolderID}}">{{end}}
+            <input class="file-picker" id="upload-file" type="file" name="file" required data-auto-submit>
+            <label class="button secondary" for="upload-file">{{t .Language "storage.add_file"}}</label>
+          </form>
+          <button class="button secondary" type="button" data-dialog-target="create-folder-dialog">{{t .Language "storage.create_folder"}}</button>
+        </div>
+      </div>
+
+      <dialog class="modal small-modal" id="create-folder-dialog">
+        <div class="modal-head">
+          <h2>{{t .Language "storage.create_folder"}}</h2>
+          <button class="icon-button" type="button" data-dialog-close aria-label="{{t .Language "common.close"}}">x</button>
+        </div>
+        <form method="post" action="/storages/{{.Storage.ID}}/folders" class="dialog-form">
+          {{if .FolderID}}<input type="hidden" name="parentId" value="{{.FolderID}}">{{end}}
+          <label><span>{{t .Language "storage.folder_name"}}</span><input name="name" placeholder="{{t .Language "storage.new_folder"}}" required autofocus></label>
+          <div class="dialog-actions">
+            <button class="secondary" type="button" data-dialog-close>{{t .Language "common.cancel"}}</button>
+            <button type="submit">{{t .Language "storage.add"}}</button>
+          </div>
+        </form>
+      </dialog>
+
+      <form method="get" action="/storages/{{.Storage.ID}}" class="file-filter-bar">
+        {{if .FolderID}}<input type="hidden" name="folderId" value="{{.FolderID}}">{{end}}
+        <input name="q" value="{{.FileSearch}}" placeholder="{{t .Language "storage.search"}}">
+        <select name="sort">
+          <option value="" {{if eq .FileSort ""}}selected{{end}}>{{t .Language "storage.sort_new"}}</option>
+          <option value="name" {{if eq .FileSort "name"}}selected{{end}}>{{t .Language "storage.sort_name"}}</option>
+          <option value="size" {{if eq .FileSort "size"}}selected{{end}}>{{t .Language "storage.sort_size"}}</option>
+          <option value="created" {{if eq .FileSort "created"}}selected{{end}}>{{t .Language "storage.sort_date"}}</option>
+        </select>
+        <select name="dir">
+          <option value="asc" {{if eq .FileDirection "asc"}}selected{{end}}>{{t .Language "storage.asc"}}</option>
+          <option value="desc" {{if eq .FileDirection "desc"}}selected{{end}}>{{t .Language "storage.desc"}}</option>
+        </select>
+        <button class="secondary" type="submit">{{t .Language "common.apply"}}</button>
+      </form>
+
+      <div class="table-wrap">
+        <table class="files-table">
+          <thead>
+            <tr>
+              <th>{{t .Language "storage.name"}}</th>
+              <th>{{t .Language "storage.size"}}</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {{range .Folders}}
+            <tr class="compact-row">
+              <td data-label="{{t $.Language "storage.name"}}"><a class="file-name folder-link" href="/storages/{{$.Storage.ID}}?folderId={{.ID}}">{{.Name}}</a></td>
+              <td data-label="{{t $.Language "storage.size"}}" class="muted">-</td>
+              <td class="right action-cell">
+                <div class="row-actions file-actions compact-actions">
+                  <a class="button compact secondary" href="/storages/{{$.Storage.ID}}?folderId={{.ID}}">{{t $.Language "storage.open"}}</a>
+                  <details class="file-menu">
+                    <summary class="icon-button" aria-label="{{t $.Language "storage.actions"}}">...</summary>
+	                    <div class="menu-panel">
+	                      <button type="button" class="menu-item" data-dialog-target="folder-links-{{.ID}}">{{t $.Language "storage.links"}}</button>
+	                      <button type="button" class="menu-item" data-dialog-target="folder-access-{{.ID}}">{{t $.Language "storage.accesses"}}</button>
+	                      <button type="button" class="menu-item" data-dialog-target="folder-rename-{{.ID}}">{{t $.Language "storage.rename"}}</button>
+                      <form method="post" action="/folders/{{.ID}}/delete" class="menu-form" data-confirm="{{t $.Language "storage.confirm_folder_delete"}}">
+                        <button class="menu-item danger-text" type="submit">{{t $.Language "storage.delete"}}</button>
+                      </form>
+                    </div>
+                  </details>
+                </div>
+
+                <dialog class="modal small-modal" id="folder-links-{{.ID}}">
+                  <div class="modal-head">
+                    <div>
+                      <h2>{{t $.Language "storage.folder_access"}}</h2>
+                      <p class="muted">{{.Name}}</p>
+                    </div>
+                    <button class="icon-button" type="button" data-dialog-close aria-label="{{t $.Language "common.close"}}">x</button>
+                  </div>
+                  <div class="copy-row">
+                    <input readonly data-folder-link="/storages/{{$.Storage.ID}}?folderId={{.ID}}">
+                    <button class="secondary" type="button" data-copy-from-folder-link="/storages/{{$.Storage.ID}}?folderId={{.ID}}" data-copy-label="{{t $.Language "common.copy"}}" data-copied-label="{{t $.Language "common.copied"}}">{{t $.Language "common.copy"}}</button>
+                  </div>
+	                  <p class="muted folder-link-note">{{t $.Language "storage.folder_link_note"}}</p>
+	                </dialog>
+
+	                <dialog class="modal" id="folder-access-{{.ID}}">
+	                  <div class="modal-head">
+	                    <div>
+	                      <h2>{{t $.Language "storage.folder_accesses"}}</h2>
+	                      <p class="muted">{{.Name}}</p>
+	                    </div>
+	                    <button class="icon-button" type="button" data-dialog-close aria-label="{{t $.Language "common.close"}}">x</button>
+	                  </div>
+	                  <form method="post" action="/folders/{{.ID}}/accesses" class="inline-form">
+	                    <input name="userEmail" type="email" placeholder="{{t $.Language "storage.user_email"}}" required>
+	                    <select name="accessLevel">
+	                      <option value="VIEWER">{{t $.Language "access.viewer"}}</option>
+	                      <option value="UPLOADER">{{t $.Language "storage.upload_access"}}</option>
+	                      <option value="MANAGER">{{t $.Language "storage.manage_access"}}</option>
+	                    </select>
+	                    <button type="submit">{{t $.Language "storage.grant"}}</button>
+	                  </form>
+	                  <div class="table-wrap">
+	                    <table class="modal-table">
+	                      <thead>
+	                        <tr>
+	                          <th>{{t $.Language "storage.user"}}</th>
+	                          <th>{{t $.Language "storage.level"}}</th>
+	                          <th></th>
+	                        </tr>
+	                      </thead>
+	                      <tbody>
+	                        {{range (index $.FolderAccesses .ID)}}
+	                        <tr>
+	                          <td data-label="{{t $.Language "storage.user"}}">{{.UserEmail}}</td>
+	                          <td data-label="{{t $.Language "storage.level"}}"><span class="badge">{{displayAccessLang $.Language .AccessLevel}}</span></td>
+	                          <td class="right action-cell">
+	                            <form method="post" action="/folders/{{.FolderID}}/accesses/{{.UserID}}/delete" data-confirm="{{t $.Language "storage.confirm_folder_access_remove"}}"><button class="link-danger" type="submit">{{t $.Language "storage.remove"}}</button></form>
+	                          </td>
+	                        </tr>
+	                        {{else}}
+	                        <tr><td colspan="3" class="empty">{{t $.Language "storage.no_folder_accesses"}}</td></tr>
+	                        {{end}}
+	                      </tbody>
+	                    </table>
+	                  </div>
+	                </dialog>
+
+	                <dialog class="modal small-modal" id="folder-rename-{{.ID}}">
+                  <div class="modal-head">
+                    <h2>{{t $.Language "storage.rename_folder"}}</h2>
+                    <button class="icon-button" type="button" data-dialog-close aria-label="{{t $.Language "common.close"}}">x</button>
+                  </div>
+                  <form method="post" action="/folders/{{.ID}}/rename" class="dialog-form">
+                    <label><span>{{t $.Language "storage.folder_name"}}</span><input name="name" value="{{.Name}}" required></label>
+                    <div class="dialog-actions">
+                      <button class="secondary" type="button" data-dialog-close>{{t $.Language "common.cancel"}}</button>
+                      <button type="submit">{{t $.Language "common.save"}}</button>
+                    </div>
+                  </form>
+                </dialog>
+              </td>
+            </tr>
+            {{end}}
+            {{range .Files}}
+            <tr class="compact-row">
+              <td data-label="{{t $.Language "storage.name"}}"><span class="file-name">{{.OriginalName}}</span></td>
+              <td data-label="{{t $.Language "storage.size"}}">{{formatBytes .Size}}</td>
+              <td class="right action-cell">
+                <div class="row-actions file-actions compact-actions">
+                  <a class="button compact" href="/api/files/{{.ID}}/download">{{t $.Language "storage.download"}}</a>
+                  <details class="file-menu">
+                    <summary class="icon-button" aria-label="{{t $.Language "storage.actions"}}">...</summary>
+                    <div class="menu-panel">
+                      <button type="button" class="menu-item" data-dialog-target="links-{{.ID}}">{{t $.Language "storage.links"}}</button>
+                      <button type="button" class="menu-item" data-dialog-target="file-rename-{{.ID}}">{{t $.Language "storage.rename"}}</button>
+                      <form method="post" enctype="multipart/form-data" action="/files/{{.ID}}/replace" class="menu-form" data-replace-form data-confirm="{{t $.Language "storage.confirm_replace"}}">
+                        <label class="menu-item" for="replace-{{.ID}}">{{t $.Language "storage.replace"}}</label>
+                        <input id="replace-{{.ID}}" type="file" name="file" hidden data-auto-submit>
+                      </form>
+                      <form method="post" action="/files/{{.ID}}/delete" class="menu-form" data-confirm="{{t $.Language "storage.confirm_file_delete"}}">
+                        <button class="menu-item danger-text" type="submit">{{t $.Language "storage.delete"}}</button>
+                      </form>
+                    </div>
+                  </details>
+                </div>
+
+                <dialog class="modal small-modal" id="file-rename-{{.ID}}">
+                  <div class="modal-head">
+                    <h2>{{t $.Language "storage.rename_file"}}</h2>
+                    <button class="icon-button" type="button" data-dialog-close aria-label="{{t $.Language "common.close"}}">x</button>
+                  </div>
+                  <form method="post" action="/files/{{.ID}}/rename" class="dialog-form">
+                    <label><span>{{t $.Language "storage.file_name"}}</span><input name="name" value="{{.OriginalName}}" required></label>
+                    <div class="dialog-actions">
+                      <button class="secondary" type="button" data-dialog-close>{{t $.Language "common.cancel"}}</button>
+                      <button type="submit">{{t $.Language "common.save"}}</button>
+                    </div>
+                  </form>
+                </dialog>
+
+                <dialog class="modal" id="links-{{.ID}}" {{if eq $.ActiveLinkFileID .ID}}data-auto-open{{end}}>
+                  <div class="modal-head">
+                    <div>
+                      <h2>{{t $.Language "storage.links"}}</h2>
+                      <p class="muted">{{.OriginalName}}</p>
+                    </div>
+                    <button class="icon-button" type="button" data-dialog-close aria-label="{{t $.Language "common.close"}}">x</button>
+                  </div>
+                  {{if and $.ShareURL (eq $.ActiveLinkFileID .ID)}}
+                  <div class="copy-row">
+                    <input readonly value="{{$.ShareURL}}">
+                    <button class="secondary" type="button" data-copy-value="{{$.ShareURL}}" data-copy-label="{{t $.Language "common.copy"}}" data-copied-label="{{t $.Language "common.copied"}}">{{t $.Language "common.copy"}}</button>
+                  </div>
+                  {{end}}
+                  <form method="post" action="/files/{{.ID}}/links" class="inline-form">
+                    <select name="accessType">
+                      <option value="READ">{{t $.Language "storage.download_file"}}</option>
+                      <option value="WRITE">{{t $.Language "storage.allow_replace"}}</option>
+                    </select>
+                    <button type="submit">{{t $.Language "storage.create_link"}}</button>
+                  </form>
+                  <div class="table-wrap">
+                    <table class="modal-table">
+                      <thead>
+                        <tr>
+                          <th>{{t $.Language "storage.link"}}</th>
+                          <th>{{t $.Language "storage.accesses"}}</th>
+                          <th>{{t $.Language "storage.status"}}</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {{range (index $.FileLinks .ID)}}
+                        <tr>
+                          <td data-label="{{t $.Language "storage.link"}}">
+                            {{if .URL}}
+                            <div class="copy-row table-copy">
+                              <input readonly value="{{.URL}}">
+                              <button class="secondary" type="button" data-copy-value="{{.URL}}" data-copy-label="{{t $.Language "common.copy"}}" data-copied-label="{{t $.Language "common.copied"}}">{{t $.Language "common.copy"}}</button>
+                            </div>
+                            {{else}}
+                            <span class="muted">{{t $.Language "storage.link_refreshing"}}</span>
+                            {{end}}
+                          </td>
+                          <td data-label="{{t $.Language "storage.accesses"}}"><span class="badge">{{displayShareLang $.Language .AccessType}}</span></td>
+                          <td data-label="{{t $.Language "storage.status"}}">{{if .IsActive}}<span class="status ok">{{t $.Language "storage.active"}}</span>{{else}}<span class="status off">{{t $.Language "storage.disabled"}}</span>{{end}}</td>
+                          <td class="right action-cell"><form method="post" action="/links/{{.ID}}/delete" data-confirm="{{t $.Language "storage.confirm_link_disable"}}"><button class="link-danger" type="submit">{{t $.Language "storage.disable"}}</button></form></td>
+                        </tr>
+                        {{else}}
+                        <tr><td colspan="4" class="empty">{{t $.Language "storage.no_links"}}</td></tr>
+                        {{end}}
+                      </tbody>
+                    </table>
+                  </div>
+                </dialog>
+              </td>
+            </tr>
+            {{else}}
+              {{if not $.Folders}}<tr><td colspan="3" class="empty">{{t $.Language "storage.empty_folder"}}</td></tr>{{end}}
+            {{end}}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <dialog class="modal access-modal" id="access-dialog">
+      <div class="modal-head">
+        <div>
+          <h2>{{t .Language "storage.accesses"}}</h2>
+          <p class="muted">{{.Storage.Name}}</p>
+        </div>
+        <button class="icon-button" type="button" data-dialog-close aria-label="{{t .Language "common.close"}}">x</button>
+      </div>
+      <form method="post" action="/storages/{{.Storage.ID}}/accesses" class="inline-form">
+        <input name="userEmail" type="email" placeholder="{{t .Language "storage.user_email"}}" required>
+        <select name="accessLevel">
+          <option value="VIEWER">{{t .Language "access.viewer"}}</option>
+          <option value="UPLOADER">{{t .Language "storage.upload_access"}}</option>
+          <option value="MANAGER">{{t .Language "storage.manage_access"}}</option>
+          <option value="OWNER">{{t .Language "access.owner"}}</option>
+        </select>
+        <button type="submit">{{t .Language "storage.grant"}}</button>
+      </form>
+      <div class="table-wrap">
+        <table class="modal-table">
+          <thead>
+            <tr>
+              <th>{{t .Language "storage.user"}}</th>
+              <th>{{t .Language "storage.level"}}</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {{range .Accesses}}
+            <tr>
+              <td data-label="{{t $.Language "storage.user"}}">{{.UserEmail}}</td>
+              <td data-label="{{t $.Language "storage.level"}}"><span class="badge">{{displayAccessLang $.Language .AccessLevel}}</span></td>
+              <td class="right action-cell">
+                <form method="post" action="/storages/{{.StorageID}}/accesses/{{.UserID}}/delete" data-confirm="{{t $.Language "storage.confirm_access_remove"}}"><button class="link-danger" type="submit">{{t $.Language "storage.remove"}}</button></form>
+              </td>
+            </tr>
+            {{else}}
+            <tr><td colspan="3" class="empty">{{t $.Language "storage.no_accesses"}}</td></tr>
+            {{end}}
+          </tbody>
+        </table>
+      </div>
+    </dialog>
+    {{end}}
+  </main>
+</body>
+</html>

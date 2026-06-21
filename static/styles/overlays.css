@@ -1,0 +1,181 @@
+.icon-button {
+  width: 36px;
+  height: 36px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  background: var(--menu-bg);
+  color: var(--text);
+  padding: 0;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.icon-button:hover {
+  background: var(--hover-bg);
+  color: var(--text);
+}
+
+.file-menu {
+  position: relative;
+}
+
+.file-menu summary {
+  list-style: none;
+}
+
+.file-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+.menu-panel {
+  position: absolute;
+  right: 0;
+  z-index: 20;
+  min-width: 170px;
+  margin-top: 6px;
+  padding: 6px;
+  background: var(--menu-bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.menu-panel.floating {
+  position: absolute;
+  right: auto;
+  margin-top: 0;
+  z-index: 1000;
+}
+
+.action-popover {
+  position: absolute;
+  width: 170px;
+  margin: 0;
+  padding: 6px;
+  background: var(--menu-bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 16px 42px rgba(18, 31, 45, 0.18);
+  z-index: 1000;
+}
+
+.action-popover::backdrop {
+  background: transparent;
+}
+
+.menu-item {
+  width: 100%;
+  display: block;
+  padding: 9px 10px;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  border-radius: 6px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.menu-item:hover {
+  background: var(--hover-bg);
+}
+
+.menu-form {
+  margin: 0;
+}
+
+.danger-text {
+  color: var(--danger);
+}
+
+.modal {
+  width: min(760px, calc(100% - 28px));
+  max-height: min(720px, calc(100vh - 48px));
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 24px 70px rgba(18, 31, 45, 0.25);
+  overflow: auto;
+  white-space: normal;
+}
+
+.small-modal {
+  width: min(560px, calc(100% - 28px));
+}
+
+.modal::backdrop {
+  background: rgba(22, 31, 41, 0.32);
+}
+
+.modal-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 16px;
+}
+
+.modal-table {
+  min-width: 680px;
+}
+
+.share-url {
+  overflow-wrap: anywhere;
+}
+
+.copy-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  margin: 12px 0 14px;
+}
+
+.copy-row input {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background: var(--success-bg);
+  border-color: var(--success-line);
+}
+
+.modal p {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.folder-link-note {
+  max-width: 100%;
+}
+
+.table-copy {
+  margin: 0;
+  min-width: 330px;
+}
+
+.table-copy button {
+  padding: 9px 12px;
+}
+
+.dialog-form {
+  display: grid;
+  gap: 16px;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.files-band .table-wrap {
+  overflow: visible;
+}
+
+.files-table,
+.files-table tbody,
+.files-table tr,
+.files-table td {
+  overflow: visible;
+}

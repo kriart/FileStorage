@@ -1,0 +1,201 @@
+label {
+  display: grid;
+  gap: 6px;
+  font-weight: 600;
+}
+
+.field-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.hint {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.type-field {
+  display: grid;
+  gap: 6px;
+}
+
+.type-editor {
+  display: grid;
+  gap: 10px;
+}
+
+.type-editor-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+}
+
+.type-chip-list {
+  min-height: 42px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-2);
+}
+
+.type-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  padding: 4px 6px 4px 9px;
+  border: 1px solid var(--accent-line);
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.type-chip button {
+  width: 22px;
+  height: 22px;
+  display: inline-grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--accent-dark);
+  font-weight: 800;
+}
+
+.type-chip button:hover {
+  background: rgba(31, 111, 91, 0.12);
+}
+
+.deny-editor .type-chip,
+.danger-pill {
+  border-color: var(--danger-line);
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.deny-editor .type-chip button {
+  color: var(--danger);
+}
+
+.deny-editor .type-chip button:hover {
+  background: rgba(180, 35, 24, 0.1);
+}
+
+.type-empty {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  background: var(--input-bg);
+  color: var(--text);
+  padding: 10px 11px;
+  font: inherit;
+  border-radius: 6px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid rgba(31, 111, 91, 0.18);
+  border-color: var(--accent);
+}
+
+textarea {
+  resize: vertical;
+}
+
+button,
+.button {
+  border: 0;
+  background: var(--accent);
+  color: #fff;
+  padding: 10px 14px;
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+  display: inline-block;
+  border-radius: 6px;
+}
+
+.button.compact,
+button.compact {
+  padding: 7px 10px;
+  font-size: 13px;
+}
+
+button:hover,
+.button:hover {
+  background: var(--accent-dark);
+  text-decoration: none;
+}
+
+.ghost {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--line);
+}
+
+.ghost:hover {
+  background: var(--hover-bg);
+}
+
+.danger {
+  background: var(--danger);
+}
+
+.secondary {
+  background: var(--secondary-bg);
+  color: var(--text);
+  border: 1px solid var(--line);
+}
+
+.secondary:hover {
+  background: var(--secondary-hover-bg);
+}
+
+.link-danger {
+  background: transparent;
+  color: var(--danger);
+  padding: 0;
+  font-weight: 600;
+}
+
+.link-danger:hover {
+  background: transparent;
+  text-decoration: underline;
+}
+
+.error,
+.notice {
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow-wrap: anywhere;
+  border-radius: 6px;
+}
+
+.error {
+  border-color: var(--danger-line);
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.notice {
+  border-color: var(--success-line);
+  background: var(--success-bg);
+}

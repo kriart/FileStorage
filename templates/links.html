@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="{{.Language}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{.Title}}</title>
+  <link rel="stylesheet" href="/static/app.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body data-theme="{{.Theme}}">
+  {{if .Flash}}<div class="toast-stack"><div class="toast {{.Flash.Kind}}" role="status">{{.Flash.Message}}</div></div>{{end}}
+  {{template "topbar" .}}
+  <main class="page">
+    <div class="page-head">
+      <div>
+        <h1>Ссылки</h1>
+        {{if .File}}<p class="muted">{{.File.OriginalName}} · {{formatBytes .File.Size}}</p>{{end}}
+      </div>
+      <a href="/">Хранилища</a>
+    </div>
+    {{if .Error}}<p class="error">{{.Error}}</p>{{end}}
+    {{if .ShareURL}}<p class="notice">{{.ShareURL}}</p>{{end}}
+
+    {{if .File}}
+    <section class="band">
+      <form method="post" action="/files/{{.File.ID}}/links" class="inline-form">
+        <select name="accessType">
+          <option value="READ">Скачать файл</option>
+          <option value="WRITE">Разрешить замену</option>
+        </select>
+        <button type="submit">Создать ссылку</button>
+      </form>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Ссылка</th>
+              <th>Доступ</th>
+              <th>Статус</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+          {{range .Links}}
+          <tr>
+              <td data-label="Ссылка">
+                {{if .URL}}
+                <div class="copy-row table-copy">
+                  <input readonly value="{{.URL}}">
+                  <button class="secondary" type="button" data-copy-value="{{.URL}}">Копировать</button>
+                </div>
+                {{else}}
+                <span class="muted">Ссылка обновляется</span>
+                {{end}}
+              </td>
+              <td data-label="Доступ"><span class="badge">{{displayShare .AccessType}}</span></td>
+              <td data-label="Статус">{{if .IsActive}}<span class="status ok">активна</span>{{else}}<span class="status off">отключена</span>{{end}}</td>
+              <td class="right action-cell"><form method="post" action="/links/{{.ID}}/delete" data-confirm="Отключить ссылку?"><button class="link-danger" type="submit">Отключить</button></form></td>
+            </tr>
+            {{else}}
+          <tr><td colspan="4" class="empty">Ссылок пока нет</td></tr>
+            {{end}}
+          </tbody>
+        </table>
+      </div>
+    </section>
+    {{end}}
+  </main>
+</body>
+</html>

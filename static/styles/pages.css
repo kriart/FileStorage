@@ -1,0 +1,364 @@
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.admin-stats > div {
+  min-height: 76px;
+  padding: 15px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.admin-stats strong {
+  display: block;
+  font-size: 22px;
+}
+
+.profile-strip {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.profile-settings {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.8fr) minmax(0, 1.2fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.profile-data {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.profile-data > div {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-2);
+}
+
+.profile-data strong {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.profile-edit-actions {
+  margin-top: 14px;
+}
+
+.avatar-form {
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+}
+
+.avatar-frame {
+  position: relative;
+  width: 112px;
+  height: 112px;
+}
+
+.avatar-preview {
+  width: 112px;
+  height: 112px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+  font-size: 34px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.avatar-upload-button {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow);
+  font-size: 22px;
+  line-height: 1;
+  font-weight: 760;
+  cursor: pointer;
+}
+
+.avatar-upload-button:hover {
+  background: var(--hover-bg);
+  text-decoration: none;
+}
+
+.avatar-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.inline-card-form {
+  box-shadow: none;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.usage-line {
+  display: grid;
+  gap: 7px;
+  min-width: 180px;
+}
+
+.usage-track {
+  display: block;
+  width: 100%;
+  height: 7px;
+  background: var(--usage-track);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.overview-strip .usage-track {
+  margin-top: 12px;
+}
+
+.usage-fill {
+  display: block;
+  min-width: 10px;
+  height: 100%;
+  background: var(--accent);
+}
+
+.usage-fill[style*="width: 0%"] {
+  min-width: 0;
+}
+
+.right {
+  text-align: right;
+}
+
+.row-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  align-items: center;
+}
+
+.action-cell {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.file-actions {
+  flex-wrap: wrap;
+  max-width: 340px;
+}
+
+.file-name {
+  display: inline-block;
+  max-width: 270px;
+  overflow-wrap: anywhere;
+  font-weight: 650;
+}
+
+.replace-form {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.replace-form input[type="file"] {
+  width: 190px;
+  max-width: 100%;
+  padding: 6px;
+}
+
+.empty {
+  color: var(--muted);
+  text-align: center;
+}
+
+.topbar-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.topbar-actions form {
+  margin: 0;
+}
+
+.language-menu {
+  position: relative;
+}
+
+.language-menu summary {
+  min-height: 39px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 9px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text);
+  font-weight: 650;
+  cursor: pointer;
+  list-style: none;
+}
+
+.language-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+.language-menu summary:hover {
+  background: var(--hover-bg);
+}
+
+.language-panel {
+  position: absolute;
+  right: 0;
+  z-index: 30;
+  min-width: 70px;
+  margin-top: 6px;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--menu-bg);
+  box-shadow: var(--shadow);
+}
+
+.theme-toggle-form {
+  display: inline-flex;
+}
+
+.theme-toggle {
+  width: 39px;
+  height: 39px;
+  font-size: 18px;
+}
+
+.meta-line,
+.section-head,
+.create-folder-form,
+.upload-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.meta-line,
+.section-head {
+  flex-wrap: wrap;
+}
+
+.section-head {
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.section-actions {
+  align-self: flex-start;
+  margin-top: 18px;
+}
+
+.files-band {
+  padding-top: 18px;
+}
+
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.breadcrumb-root {
+  font-weight: 700;
+}
+
+.create-folder-form input {
+  width: 210px;
+}
+
+.upload-form {
+  margin-bottom: 12px;
+}
+
+.section-head .upload-form {
+  margin-bottom: 0;
+}
+
+.section-head .button,
+.section-head button {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.file-picker {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.files-table {
+  table-layout: fixed;
+  overflow: visible;
+}
+
+.files-table th:nth-child(1) {
+  width: 48%;
+}
+
+.files-table th:nth-child(2) {
+  width: 20%;
+}
+
+.files-table th:nth-child(3) {
+  width: 14%;
+}
+
+.compact-row td {
+  padding-top: 9px;
+  padding-bottom: 9px;
+}
+
+.file-actions {
+  flex-wrap: nowrap;
+  max-width: none;
+}
+
+.file-name {
+  max-width: 100%;
+}
+
+.folder-link::before {
+  content: "[ ] ";
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.compact-actions {
+  gap: 8px;

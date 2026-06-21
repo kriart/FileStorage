@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="{{.Language}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{.Title}}</title>
+  <link rel="stylesheet" href="/static/app.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body data-theme="{{.Theme}}">
+  {{if .Flash}}<div class="toast-stack"><div class="toast {{.Flash.Kind}}" role="status">{{.Flash.Message}}</div></div>{{end}}
+  {{template "topbar" .}}
+  <main class="page">
+    <div class="page-head">
+      <div>
+        <h1>{{t .Language "storage.list_title"}}</h1>
+        <p class="muted">{{t .Language "storage.list_subtitle"}}</p>
+      </div>
+      <a class="button" href="/storages/new">{{t .Language "storage.new"}}</a>
+    </div>
+    {{if .Error}}<p class="error">{{.Error}}</p>{{end}}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>{{t .Language "storage.name"}}</th>
+            <th>{{t .Language "storage.type"}}</th>
+            <th>{{t .Language "storage.status"}}</th>
+            <th>{{t .Language "storage.used"}}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {{range .Storages}}
+          <tr>
+            <td data-label="{{t $.Language "storage.name"}}"><a class="strong-link" href="/storages/{{.ID}}">{{.Name}}</a></td>
+            <td data-label="{{t $.Language "storage.type"}}"><span class="badge">{{displayStorageTypeLang $.Language .Type}}</span></td>
+            <td data-label="{{t $.Language "storage.status"}}"><span class="badge soft">{{displayVisibilityLang $.Language .Visibility}}</span></td>
+            <td data-label="{{t $.Language "storage.used"}}">
+              <div class="usage-line">
+                <span>{{formatBytes .UsedSize}} / {{formatBytes .MaxStorageSize}}</span>
+                <span class="usage-track"><span class="usage-fill" style="width: {{usagePercent .UsedSize .MaxStorageSize}}%"></span></span>
+              </div>
+            </td>
+            <td class="right action-cell"><a class="button compact secondary" href="/storages/{{.ID}}">{{t $.Language "storage.open"}}</a></td>
+          </tr>
+          {{else}}
+          <tr><td colspan="5" class="empty">{{t .Language "storage.empty_list"}}</td></tr>
+          {{end}}
+        </tbody>
+      </table>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="{{.Language}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{.Title}}</title>
+  <link rel="stylesheet" href="/static/app.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body data-theme="{{.Theme}}">
+  {{if .Flash}}<div class="toast-stack"><div class="toast {{.Flash.Kind}}" role="status">{{.Flash.Message}}</div></div>{{end}}
+  {{template "topbar" .}}
+  <main class="page narrow">
+    {{if .Storage}}
+    <div class="page-head">
+      <h1>{{t .Language "storage.settings"}}</h1>
+      <a href="/storages/{{.Storage.ID}}">{{t .Language "storage.back"}}</a>
+    </div>
+    {{else}}
+    <div class="page-head"><h1>{{t .Language "storage.settings"}}</h1></div>
+    {{end}}
+    {{if .Error}}<p class="error">{{.Error}}</p>{{end}}
+    {{if .Storage}}
+    <form method="post" action="/storages/{{.Storage.ID}}/settings" class="grid-form">
+      <label><span>{{t .Language "storage.name"}}</span> <input name="name" value="{{.Storage.Name}}" required></label>
+      <label><span>{{t .Language "storage.status"}}</span>
+        <select name="visibility">
+          <option value="PRIVATE" {{if eq .Storage.Visibility "PRIVATE"}}selected{{end}}>{{t .Language "visibility.private"}}</option>
+          <option value="PUBLIC_READ" {{if eq .Storage.Visibility "PUBLIC_READ"}}selected{{end}}>{{t .Language "visibility.public_read"}}</option>
+          <option value="PUBLIC_UPLOAD" {{if eq .Storage.Visibility "PUBLIC_UPLOAD"}}selected{{end}}>{{t .Language "visibility.public_upload"}}</option>
+        </select>
+      </label>
+      <label><span>{{t .Language "storage.max_file"}}</span> <input name="maxFileSize" type="number" value="{{.Storage.MaxFileSize}}" min="1"></label>
+      <label><span>{{t .Language "storage.max_storage"}}</span> <input name="maxStorageSize" type="number" value="{{.Storage.MaxStorageSize}}" min="1"></label>
+      <div class="wide type-field">
+        <span class="field-label">{{t .Language "storage.allowed_rules"}}</span>
+        <div class="type-editor" data-type-editor data-empty-label="{{t .Language "storage.any_files"}}">
+          <textarea class="type-editor-value" name="allowedFileTypes" hidden>{{range .Storage.AllowedFileTypes}}{{.}}
+{{end}}</textarea>
+          <div class="type-editor-row">
+            <input class="type-editor-input" type="text" placeholder="{{t .Language "storage.allowed_placeholder"}}">
+            <button class="secondary" type="button" data-type-add>{{t .Language "storage.add"}}</button>
+          </div>
+          <div class="type-chip-list" data-type-list></div>
+        </div>
+        <small class="hint">{{t .Language "storage.allowed_hint"}}</small>
+      </div>
+      <div class="wide type-field">
+        <span class="field-label">{{t .Language "storage.blocked_rules"}}</span>
+        <div class="type-editor deny-editor" data-type-editor data-empty-label="{{t .Language "storage.no_rules"}}">
+          <textarea class="type-editor-value" name="blockedFileTypes" hidden>{{range .Storage.BlockedFileTypes}}{{.}}
+{{end}}</textarea>
+          <div class="type-editor-row">
+            <input class="type-editor-input" type="text" placeholder="{{t .Language "storage.blocked_placeholder"}}">
+            <button class="secondary" type="button" data-type-add>{{t .Language "storage.add"}}</button>
+          </div>
+          <div class="type-chip-list" data-type-list></div>
+        </div>
+        <small class="hint">{{t .Language "storage.blocked_hint"}}</small>
+      </div>
+      <div class="actions"><button type="submit">{{t .Language "common.save"}}</button></div>
+    </form>
+    {{end}}
+  </main>
+</body>
+</html>

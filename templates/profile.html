@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="{{.Language}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{.Title}}</title>
+  <link rel="stylesheet" href="/static/app.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body data-theme="{{.Theme}}">
+  {{if .Flash}}<div class="toast-stack"><div class="toast {{.Flash.Kind}}" role="status">{{.Flash.Message}}</div></div>{{end}}
+  {{template "topbar" .}}
+  <main class="page">
+    <div class="page-head">
+      <div>
+        <h1>{{t .Language "profile.title"}}</h1>
+      </div>
+    </div>
+    {{if .Error}}<p class="error">{{.Error}}</p>{{end}}
+    {{if .Profile}}
+    <section class="band">
+      <div class="profile-settings">
+        <div>
+          <h2>{{t .Language "profile.avatar"}}</h2>
+          <form method="post" enctype="multipart/form-data" action="/profile/avatar" class="avatar-form">
+            <div class="avatar-frame">
+              <div class="avatar-preview" aria-hidden="true">
+                {{if .Profile.User.AvatarPath}}
+                  <img src="/profile/avatar" alt="">
+                {{else}}
+                  <span>{{if .Profile.User.Username}}{{printf "%.1s" .Profile.User.Username}}{{else}}FS{{end}}</span>
+                {{end}}
+              </div>
+              <input class="file-picker" id="avatar-file" type="file" name="avatar" accept="image/png,image/jpeg,image/webp" required data-auto-submit>
+              <label class="avatar-upload-button" for="avatar-file" title="{{t .Language "common.upload"}}" aria-label="{{t .Language "common.upload"}}">+</label>
+            </div>
+          </form>
+        </div>
+        <div>
+          <h2>{{t .Language "profile.account"}}</h2>
+          <div class="profile-data">
+            <div><span class="metric-label">{{t .Language "profile.username"}}</span><strong>{{.Profile.User.Username}}</strong></div>
+            <div><span class="metric-label">{{t .Language "profile.email"}}</span><strong>{{.Profile.User.Email}}</strong></div>
+            <div><span class="metric-label">{{t .Language "profile.birth_date"}}</span><strong>{{if .Profile.User.DateOfBirth}}{{formatDateDisplay .Profile.User.DateOfBirth}}{{else}}{{t .Language "profile.not_set"}}{{end}}</strong></div>
+            <div><span class="metric-label">{{t .Language "profile.created"}}</span><strong>{{.Profile.User.CreatedAt.Format "02.01.2006"}}</strong></div>
+          </div>
+          <div class="actions profile-edit-actions">
+            <button class="secondary" type="button" data-dialog-target="profile-edit-dialog">{{t .Language "profile.edit"}}</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <dialog class="modal small-modal" id="profile-edit-dialog">
+      <div class="modal-head">
+        <h2>{{t .Language "profile.edit"}}</h2>
+        <button class="icon-button" type="button" data-dialog-close aria-label="Close">x</button>
+      </div>
+      <form method="post" action="/profile" class="dialog-form">
+        <label><span>{{t .Language "profile.username"}}</span><input name="username" value="{{.Profile.User.Username}}" required maxlength="64"></label>
+        <label><span>{{t .Language "profile.email"}}</span><input value="{{.Profile.User.Email}}" disabled></label>
+        <label><span>{{t .Language "profile.birth_date"}}</span><input name="dateOfBirth" type="date" value="{{formatDateInput .Profile.User.DateOfBirth}}"></label>
+        <div class="dialog-actions">
+          <button class="secondary" type="button" data-dialog-close>{{t .Language "common.cancel"}}</button>
+          <button type="submit">{{t .Language "common.save"}}</button>
+        </div>
+      </form>
+    </dialog>
+
+    <section class="band">
+      <h2>{{t .Language "profile.sessions"}}</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>ID</th><th>{{t .Language "profile.created_at"}}</th><th>{{t .Language "profile.expires_at"}}</th><th>{{t .Language "profile.status"}}</th><th></th></tr></thead>
+          <tbody>
+            {{range .Profile.Sessions}}
+            <tr>
+              <td>{{.ID}}</td>
+              <td>{{.CreatedAt.Format "02.01.2006 15:04"}}</td>
+              <td>{{.ExpiresAt.Format "02.01.2006 15:04"}}</td>
+              <td>{{if .Active}}<span class="status ok">{{t $.Language "profile.active"}}</span>{{else}}<span class="status off">{{t $.Language "profile.revoked"}}</span>{{end}}</td>
+              <td class="right action-cell">
+                {{if .Active}}
+                <form method="post" action="/profile/sessions/{{.ID}}/revoke" data-confirm="{{t $.Language "profile.session_revoke"}}"><button class="link-danger" type="submit">{{t $.Language "common.revoke"}}</button></form>
+                {{end}}
+              </td>
+            </tr>
+            {{else}}
+            <tr><td colspan="5" class="empty">{{t .Language "profile.session_empty"}}</td></tr>
+            {{end}}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    {{end}}
+  </main>
+</body>
+</html>

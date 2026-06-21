@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="{{.Language}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{.Title}}</title>
+  <link rel="stylesheet" href="/static/app.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body class="auth-page" data-theme="{{.Theme}}">
+  {{if .Flash}}<div class="toast-stack"><div class="toast {{.Flash.Kind}}" role="status">{{.Flash.Message}}</div></div>{{end}}
+  <main class="auth-shell">
+    <div class="auth-brand">
+      <span class="brand-tile">FS</span>
+      <div>
+        <h1>File Storage</h1>
+        <p class="muted">Войдите в рабочее пространство</p>
+      </div>
+    </div>
+    {{if .Error}}<p class="error">{{.Error}}</p>{{end}}
+    <form method="post" action="/login" class="stack">
+      <label>Email <input name="email" type="email" autocomplete="email" required></label>
+      <label><span>Пароль</span> <input name="password" type="password" autocomplete="current-password" required></label>
+      <button type="submit">Войти</button>
+    </form>
+    <p class="muted"><a href="/register">Создать аккаунт</a></p>
+  </main>
+</body>
+</html>

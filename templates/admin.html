@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="{{.Language}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{.Title}}</title>
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body data-theme="{{.Theme}}">
+  {{if .Flash}}<div class="toast-stack"><div class="toast {{.Flash.Kind}}" role="status">{{.Flash.Message}}</div></div>{{end}}
+  {{template "topbar" .}}
+  <main class="page">
+    <div class="page-head">
+      <div>
+        <h1>Администрирование</h1>
+        <p class="muted">Пользователи, хранилища и последние события аудита</p>
+      </div>
+      <div class="header-actions">
+        <a class="button secondary" href="/metrics">Метрики</a>
+        <a class="button secondary" href="/metrics/raw">Raw</a>
+      </div>
+    </div>
+    {{if .Error}}<p class="error">{{.Error}}</p>{{end}}
+    {{if .Admin}}
+    <section class="admin-stats">
+      <div><span class="metric-label">Пользователи</span><strong>{{.Admin.Stats.Users}}</strong></div>
+      <div><span class="metric-label">Хранилища</span><strong>{{.Admin.Stats.Storages}}</strong></div>
+      <div><span class="metric-label">Файлы</span><strong>{{.Admin.Stats.Files}}</strong></div>
+      <div><span class="metric-label">Активные ссылки</span><strong>{{.Admin.Stats.ActiveLinks}}</strong></div>
+      <div><span class="metric-label">Занято</span><strong>{{formatBytes .Admin.Stats.UsedBytes}}</strong></div>
+    </section>
+
+    <section class="band">
+      <h2>Последние пользователи</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>ID</th><th>Email</th><th>Имя</th><th>Роль</th></tr></thead>
+          <tbody>
+            {{range .Admin.Users}}
+            <tr><td>{{.ID}}</td><td>{{.Email}}</td><td>{{.Username}}</td><td><span class="badge">{{.Role}}</span></td></tr>
+            {{else}}
+            <tr><td colspan="4" class="empty">Пользователей пока нет</td></tr>
+            {{end}}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="band">
+      <h2>Последние хранилища</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>ID</th><th>Название</th><th>Тип</th><th>Занято</th><th>Статус</th></tr></thead>
+          <tbody>
+            {{range .Admin.Storages}}
+            <tr>
+              <td>{{.ID}}</td>
+              <td><a class="strong-link" href="/storages/{{.ID}}">{{.Name}}</a></td>
+              <td><span class="badge soft">{{.Type}}</span></td>
+              <td>{{formatBytes .UsedSize}}</td>
+              <td>{{if .Deleted}}<span class="status off">удалено</span>{{else}}<span class="status ok">активно</span>{{end}}</td>
+            </tr>
+            {{else}}
+            <tr><td colspan="5" class="empty">Хранилищ пока нет</td></tr>
+            {{end}}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="band">
+      <h2>Аудит</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>ID</th><th>Пользователь</th><th>Действие</th><th>Объект</th><th>IP</th><th>Время</th></tr></thead>
+          <tbody>
+            {{range .Admin.Audit}}
+            <tr>
+              <td>{{.ID}}</td>
+              <td>{{if .UserEmail}}{{.UserEmail}}{{else}}<span class="muted">публично</span>{{end}}</td>
+              <td><span class="badge">{{.Action}}</span></td>
+              <td>{{.EntityType}}{{if .EntityID}} #{{.EntityID}}{{end}}</td>
+              <td>{{.IP}}</td>
+              <td>{{.CreatedAt.Format "02.01.2006 15:04"}}</td>
+            </tr>
+            {{else}}
+            <tr><td colspan="6" class="empty">Событий пока нет</td></tr>
+            {{end}}
+          </tbody>
+        </table>
+      </div>
+    </section>
+    {{end}}
+  </main>
+</body>
+</html>

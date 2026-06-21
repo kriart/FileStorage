@@ -1,0 +1,152 @@
+@media (max-width: 720px) {
+  .topbar,
+  .topbar-actions,
+  .page-head,
+  .header-actions,
+  .section-head,
+  .create-folder-form,
+  .upload-form,
+  .inline-form,
+  .row-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .brand {
+    min-width: 0;
+  }
+
+  .grid-form {
+    grid-template-columns: 1fr;
+  }
+
+  .overview-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-settings {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .profile-data {
+    grid-template-columns: 1fr;
+  }
+
+  .band {
+    padding: 16px;
+  }
+
+  .table-wrap {
+    overflow-x: visible;
+  }
+
+  table {
+    min-width: 0;
+    border: 0;
+    box-shadow: none;
+    background: transparent;
+  }
+
+  thead {
+    display: none;
+  }
+
+  tbody,
+  tr,
+  td {
+    display: block;
+    width: 100%;
+  }
+
+  tr {
+    margin-bottom: 12px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  td {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    text-align: right;
+  }
+
+  td::before {
+    content: attr(data-label);
+    color: var(--muted);
+    font-weight: 700;
+    text-align: left;
+  }
+
+  td.empty {
+    display: block;
+    text-align: center;
+  }
+
+  td.empty::before,
+  .action-cell::before {
+    content: "";
+  }
+
+  .action-cell {
+    width: 100%;
+    white-space: normal;
+    justify-content: flex-end;
+  }
+
+  .inline-form input,
+  .inline-form select {
+    width: 100%;
+  }
+
+  .create-folder-form input,
+  .create-folder-form button,
+  .upload-form label,
+  .upload-form button {
+    width: 100%;
+  }
+
+  .replace-form,
+  .replace-form input[type="file"],
+  .row-actions .button,
+  .row-actions button {
+    width: 100%;
+  }
+
+  .file-actions {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  .file-actions .button,
+  .file-actions button {
+    width: auto;
+  }
+
+  .modal {
+    padding: 16px;
+  }
+
+  .modal-table {
+    min-width: 0;
+  }
+
+  .copy-row {
+    grid-template-columns: 1fr;
+  }
+
+  .type-editor-row {
+    grid-template-columns: 1fr;
+  }
+
+  .toast-stack {
+    bottom: 12px;
+    right: 16px;
+    left: 16px;
+    width: auto;
+  }
+}

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="{{.Language}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{.Title}}</title>
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body data-theme="{{.Theme}}">
+  {{if .Flash}}<div class="toast-stack"><div class="toast {{.Flash.Kind}}" role="status">{{.Flash.Message}}</div></div>{{end}}
+  {{template "topbar" .}}
+  <main class="page">
+    <div class="page-head">
+      <div>
+        <h1>Метрики</h1>
+        <p class="muted">HTTP-нагрузка и время ответа текущего процесса</p>
+      </div>
+      <div class="header-actions">
+        <a class="button secondary" href="/metrics/raw">Raw</a>
+        <a class="button secondary" href="/admin">Админ</a>
+      </div>
+    </div>
+
+    <section class="admin-stats">
+      <div><span class="metric-label">Работает</span><strong>{{formatSeconds .Metrics.UptimeSeconds}}</strong></div>
+      <div><span class="metric-label">Запросы</span><strong>{{.Metrics.TotalRequests}}</strong></div>
+      <div><span class="metric-label">Ошибки</span><strong>{{.Metrics.ErrorRequests}}</strong></div>
+      <div><span class="metric-label">Маршруты</span><strong>{{len .Metrics.Routes}}</strong></div>
+      <div><span class="metric-label">Источник</span><strong>in-memory</strong></div>
+    </section>
+
+    <section class="band">
+      <div class="section-head">
+        <div>
+          <h2>Маршруты</h2>
+          <p class="muted">Счетчики сбрасываются при перезапуске приложения</p>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Метод</th>
+              <th>Путь</th>
+              <th>Статус</th>
+              <th>Запросы</th>
+              <th>Среднее время</th>
+              <th>Суммарно</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{range .Metrics.Routes}}
+            <tr>
+              <td><span class="badge soft">{{.Method}}</span></td>
+              <td><code>{{.Path}}</code></td>
+              <td>{{if .Error}}<span class="status off">{{.Status}}</span>{{else}}<span class="status ok">{{.Status}}</span>{{end}}</td>
+              <td>{{.Requests}}</td>
+              <td>{{formatDuration .AverageLatency}}</td>
+              <td>{{formatDuration .DurationSum}}</td>
+            </tr>
+            {{else}}
+            <tr><td colspan="6" class="empty">Запросов пока нет</td></tr>
+            {{end}}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

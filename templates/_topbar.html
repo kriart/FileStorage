@@ -1,0 +1,28 @@
+{{define "topbar"}}
+  <header class="topbar">
+    <a class="brand" href="/"><span class="brand-tile small">FS</span><span>File Storage</span></a>
+    <div class="topbar-actions">
+      {{if and .User (eq .User.Role "ADMIN")}}<a class="button ghost" href="/admin">{{t .Language "nav.admin"}}</a>{{end}}
+      {{if .User}}<a class="button ghost" href="/profile">{{if .User.Username}}{{.User.Username}}{{else}}{{t .Language "nav.profile"}}{{end}}</a>{{end}}
+      <a class="button ghost" href="/">{{t .Language "nav.storages"}}</a>
+      {{if .User}}
+      <details class="language-menu">
+        <summary>{{.Language}} <span aria-hidden="true">⌄</span></summary>
+        <div class="language-panel">
+          <form method="post" action="/profile/preferences">
+            <input type="hidden" name="returnTo" value="{{.CurrentURL}}">
+            <input type="hidden" name="language" value="{{if eq .Language "ru"}}en{{else}}ru{{end}}">
+            <button class="menu-item" type="submit">{{if eq .Language "ru"}}en{{else}}ru{{end}}</button>
+          </form>
+        </div>
+      </details>
+      <form method="post" action="/profile/preferences" class="theme-toggle-form">
+        <input type="hidden" name="returnTo" value="{{.CurrentURL}}">
+        <input type="hidden" name="theme" value="{{if eq .Theme "dark"}}light{{else}}dark{{end}}">
+        <button class="icon-button theme-toggle" type="submit" aria-label="{{t .Language "profile.theme"}}">{{if eq .Theme "dark"}}☾{{else}}☀{{end}}</button>
+      </form>
+      {{end}}
+      <form method="post" action="/logout"><button class="ghost" type="submit">{{t .Language "nav.logout"}}</button></form>
+    </div>
+  </header>
+{{end}}
