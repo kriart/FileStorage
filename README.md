@@ -18,8 +18,6 @@ templates/           HTML templates
 static/              CSS/JS assets
 ```
 
-Подробная документация по архитектуре, слоям приложения и отдельным пакетам находится в [docs/](./docs/README.md).
-
 ## Локальный запуск
 
 ```bash
